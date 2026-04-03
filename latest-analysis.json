@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-04-01T00:00:00.000Z",
+  "analysis": {
+    "summary": "Sistema inicializado. El primer análisis real correrá en los próximos 5 minutos.",
+    "sentiment": "neutral",
+    "confidence": 0.5,
+    "polymarket_picks": [],
+    "kalshi_picks": [],
+    "risk_level": "low",
+    "next_key_events": ["Primer análisis automático pendiente"]
+  },
+  "markets": {
+    "polymarket": [],
+    "kalshi": []
+  },
+  "meta": {
+    "source": "initial-seed",
+    "version": "1.0.0",
+    "nextRunIn": "5 minutos"
+  }
+}
