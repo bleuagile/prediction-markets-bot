@@ -1,6 +1,5 @@
 const fs = require('fs');
 const path = require('path');
-const crypto = require('crypto');
 
 const PORTFOLIO_PATH = path.join(__dirname, 'public', 'portfolio.json');
 const ANALYSIS_PATH = path.join(__dirname, 'public', 'latest-analysis.json');
@@ -13,32 +12,6 @@ const CONFIG = {
   STOP_LOSS_PCT: 0.40,
   TAKE_PROFIT_PCT: 0.80,
 };
-
-// ─── KALSHI AUTH ─────────────────────────────────────────────
-
-function getKalshiHeaders(method, path) {
-  const keyId = process.env.KALSHI_API_KEY_ID;
-  const privateKey = process.env.KALSHI_PRIVATE_KEY;
-  if (!keyId || !privateKey) return { 'Accept': 'application/json' };
-
-  try {
-    const timestamp = Date.now().toString();
-    const msgString = timestamp + method.toUpperCase() + path;
-    const sign = crypto.createSign('RSA-SHA256');
-    sign.update(msgString);
-    sign.end();
-    const signature = sign.sign(privateKey, 'base64');
-    return {
-      'Accept': 'application/json',
-      'KALSHI-ACCESS-KEY': keyId,
-      'KALSHI-ACCESS-TIMESTAMP': timestamp,
-      'KALSHI-ACCESS-SIGNATURE': signature,
-    };
-  } catch (e) {
-    console.log('  Kalshi auth error:', e.message);
-    return { 'Accept': 'application/json' };
-  }
-}
 
 // ─── PORTFOLIO ───────────────────────────────────────────────
 
@@ -99,20 +72,20 @@ async function fetchPolymarketData() {
 }
 
 async function fetchKalshiData() {
-  const apiPath = '/trade-api/v2/markets?limit=20&status=open';
-  const headers = getKalshiHeaders('GET', apiPath);
   try {
-    const res = await fetch(`https://trading-api.kalshi.com${apiPath}`, { headers, signal: AbortSignal.timeout(10000) });
+    const res = await fetch(
+      'https://trading-api.kalshi.com/trade-api/v2/markets?limit=20&status=open',
+      { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(10000) }
+    );
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (!data.markets || data.markets.length === 0) throw new Error('No markets returned');
-    const filtered = data.markets.filter(m => m.volume > 100).slice(0, 10).map(m => ({
+    if (!data.markets || data.markets.length === 0) throw new Error('No markets');
+    const filtered = data.markets.slice(0, 10).map(m => ({
       id: m.ticker, question: m.title, volume: m.volume || 0,
-      yesPrice: Math.min(0.97, Math.max(0.03, (m.yes_bid || m.last_price || 50) / 100)),
-      noPrice: Math.min(0.97, Math.max(0.03, (m.no_bid || (100 - (m.last_price || 50))) / 100)),
+      yesPrice: Math.min(0.97, Math.max(0.03, (m.yes_ask || m.yes_bid || 50) / 100)),
+      noPrice: Math.min(0.97, Math.max(0.03, (m.no_ask || m.no_bid || 50) / 100)),
       platform: 'kalshi'
     }));
-    if (filtered.length === 0) throw new Error('No valid markets');
     console.log(`  ✅ Kalshi: ${filtered.length} mercados reales`);
     return filtered;
   } catch (e) {
