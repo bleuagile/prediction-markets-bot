@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-04-12T14:27:41.258Z",
-  "analysisCount": 2,
+  "timestamp": "2026-04-12T14:31:42.225Z",
+  "analysisCount": 3,
   "combined": {
     "totalValue": 2000,
     "totalPnL": 0,
@@ -41,7 +41,7 @@
   },
   "meta": {
     "source": "github-actions-cron",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "nextRunIn": "5 minutos"
   }
 }
