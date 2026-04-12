@@ -54,7 +54,7 @@ function getMockMarkets(platform) {
 
 async function fetchPolymarketData() {
   try {
-    const res = await fetch('https://gamma-api.polymarket.com/markets?closed=false&limit=20&order=volume&ascending=false', { signal: AbortSignal.timeout(8000) });
+    const res = await fetch('https://clob.polymarket.com/markets?next_cursor=&limit=20', { signal: AbortSignal.timeout(8000) });
     const data = await res.json();
     const filtered = data.filter(m => m.volume > 5000 && m.outcomePrices).slice(0, 10).map(m => {
       let prices = [];
