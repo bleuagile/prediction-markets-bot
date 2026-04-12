@@ -51,7 +51,7 @@
     "winningTrades": 0
   },
   "kalshi": {
-    "cash": 783.2906569910306,
+    "cash": 720.0549701805817,
     "startingCash": 1000,
     "positions": [
       {
@@ -60,11 +60,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.195,
-        "currentPrice": 0.147,
+        "currentPrice": 0.193,
         "shares": 254.4,
         "cost": 49.61,
-        "currentValue": 37.4,
-        "pnl": -12.21,
+        "currentValue": 49.1,
+        "pnl": -0.51,
         "edge": 0.0413,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -74,11 +74,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.322,
-        "currentPrice": 0.355,
+        "currentPrice": 0.301,
         "shares": 133.2,
         "cost": 42.89,
-        "currentValue": 47.29,
-        "pnl": 4.4,
+        "currentValue": 40.09,
+        "pnl": -2.8,
         "edge": 0.0357,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -88,11 +88,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.285,
-        "currentPrice": 0.285,
+        "currentPrice": 0.231,
         "shares": 106.8,
         "cost": 30.44,
-        "currentValue": 30.44,
-        "pnl": 0,
+        "currentValue": 24.67,
+        "pnl": -5.77,
         "edge": 0.0254,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -102,11 +102,11 @@
         "platform": "kalshi",
         "side": "NO",
         "entryPrice": 0.29,
-        "currentPrice": 0.274,
+        "currentPrice": 0.32,
         "shares": 89.16,
         "cost": 25.86,
-        "currentValue": 24.43,
-        "pnl": -1.43,
+        "currentValue": 28.53,
+        "pnl": 2.67,
         "edge": 0.0216,
         "openedAt": "2026-04-12T15:02:10.962Z"
       },
@@ -116,11 +116,11 @@
         "platform": "kalshi",
         "side": "NO",
         "entryPrice": 0.322,
-        "currentPrice": 0.314,
+        "currentPrice": 0.36,
         "shares": 84.82,
         "cost": 27.31,
-        "currentValue": 26.63,
-        "pnl": -0.68,
+        "currentValue": 30.54,
+        "pnl": 3.22,
         "edge": 0.0232,
         "openedAt": "2026-04-12T15:31:47.881Z"
       },
@@ -130,13 +130,27 @@
         "platform": "kalshi",
         "side": "NO",
         "entryPrice": 0.407,
-        "currentPrice": 0.426,
+        "currentPrice": 0.372,
         "shares": 99.77,
         "cost": 40.61,
-        "currentValue": 42.5,
-        "pnl": 1.9,
+        "currentValue": 37.11,
+        "pnl": -3.49,
         "edge": 0.0335,
         "openedAt": "2026-04-12T15:35:16.620Z"
+      },
+      {
+        "marketId": "kalshi-eth",
+        "question": "Ethereum above $4000 by August?",
+        "platform": "kalshi",
+        "side": "NO",
+        "entryPrice": 0.548,
+        "currentPrice": 0.548,
+        "shares": 115.39,
+        "cost": 63.24,
+        "currentValue": 63.24,
+        "pnl": 0,
+        "edge": 0.053,
+        "openedAt": "2026-04-12T15:54:54.915Z"
       }
     ],
     "closedTrades": [],
@@ -144,6 +158,6 @@
     "winningTrades": 0
   },
   "createdAt": "2025-04-12T00:00:00.000Z",
-  "lastUpdated": "2026-04-12T15:39:33.737Z",
-  "analysisCount": 8
+  "lastUpdated": "2026-04-12T15:54:54.915Z",
+  "analysisCount": 9
 }
