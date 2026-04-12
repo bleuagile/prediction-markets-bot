@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-04-12T14:31:42.225Z",
-  "analysisCount": 3,
+  "timestamp": "2026-04-12T14:38:56.899Z",
+  "analysisCount": 4,
   "combined": {
     "totalValue": 2000,
     "totalPnL": 0,
@@ -10,30 +10,112 @@
   "platforms": {
     "polymarket": {
       "totalValue": 1000,
-      "cash": 1000,
+      "cash": 876.99,
       "pnl": 0,
       "pnlPct": 0,
-      "openPositions": 0,
+      "openPositions": 3,
       "totalTrades": 0,
-      "winRate": 0,
-      "closedThisRun": 0,
-      "openedThisRun": 0
+      "winRate": 0
     },
     "kalshi": {
       "totalValue": 1000,
-      "cash": 1000,
+      "cash": 877.06,
       "pnl": 0,
       "pnlPct": 0,
-      "openPositions": 0,
+      "openPositions": 3,
       "totalTrades": 0,
-      "winRate": 0,
-      "closedThisRun": 0,
-      "openedThisRun": 0
+      "winRate": 0
     }
   },
   "positions": {
-    "polymarket": [],
-    "kalshi": []
+    "polymarket": [
+      {
+        "marketId": "polymarket-recession",
+        "question": "US recession in 2025?",
+        "platform": "polymarket",
+        "side": "YES",
+        "entryPrice": 0.189,
+        "currentPrice": 0.189,
+        "shares": 254.4,
+        "cost": 48.08,
+        "currentValue": 48.08,
+        "pnl": 0,
+        "edge": 0.0401,
+        "openedAt": "2026-04-12T14:38:56.898Z"
+      },
+      {
+        "marketId": "polymarket-trump",
+        "question": "Trump approval above 50% in May?",
+        "platform": "polymarket",
+        "side": "YES",
+        "entryPrice": 0.318,
+        "currentPrice": 0.318,
+        "shares": 133.2,
+        "cost": 42.36,
+        "currentValue": 42.36,
+        "pnl": 0,
+        "edge": 0.0353,
+        "openedAt": "2026-04-12T14:38:56.898Z"
+      },
+      {
+        "marketId": "polymarket-fed",
+        "question": "Fed rate cut before June 2025?",
+        "platform": "polymarket",
+        "side": "YES",
+        "entryPrice": 0.305,
+        "currentPrice": 0.305,
+        "shares": 106.8,
+        "cost": 32.57,
+        "currentValue": 32.57,
+        "pnl": 0,
+        "edge": 0.0271,
+        "openedAt": "2026-04-12T14:38:56.898Z"
+      }
+    ],
+    "kalshi": [
+      {
+        "marketId": "kalshi-recession",
+        "question": "US recession in 2025?",
+        "platform": "kalshi",
+        "side": "YES",
+        "entryPrice": 0.195,
+        "currentPrice": 0.195,
+        "shares": 254.4,
+        "cost": 49.61,
+        "currentValue": 49.61,
+        "pnl": 0,
+        "edge": 0.0413,
+        "openedAt": "2026-04-12T14:38:56.899Z"
+      },
+      {
+        "marketId": "kalshi-trump",
+        "question": "Trump approval above 50% in May?",
+        "platform": "kalshi",
+        "side": "YES",
+        "entryPrice": 0.322,
+        "currentPrice": 0.322,
+        "shares": 133.2,
+        "cost": 42.89,
+        "currentValue": 42.89,
+        "pnl": 0,
+        "edge": 0.0357,
+        "openedAt": "2026-04-12T14:38:56.899Z"
+      },
+      {
+        "marketId": "kalshi-fed",
+        "question": "Fed rate cut before June 2025?",
+        "platform": "kalshi",
+        "side": "YES",
+        "entryPrice": 0.285,
+        "currentPrice": 0.285,
+        "shares": 106.8,
+        "cost": 30.44,
+        "currentValue": 30.44,
+        "pnl": 0,
+        "edge": 0.0254,
+        "openedAt": "2026-04-12T14:38:56.899Z"
+      }
+    ]
   },
   "recentTrades": {
     "polymarket": [],
@@ -41,7 +123,6 @@
   },
   "meta": {
     "source": "github-actions-cron",
-    "version": "2.1.0",
-    "nextRunIn": "5 minutos"
+    "version": "2.1.0"
   }
 }
