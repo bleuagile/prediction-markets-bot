@@ -1,0 +1,13 @@
+{
+  "name": "prediction-markets-autopilot",
+  "version": "2.0.0",
+  "description": "AI Autopilot para Prediction Markets - simulación 24/7 via GitHub Actions",
+  "main": "analyze.js",
+  "scripts": {
+    "analyze": "node analyze.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
