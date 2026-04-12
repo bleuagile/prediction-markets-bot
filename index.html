@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prediction Markets · AI Autopilot</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080c14;
+    --surface: #0d1421;
+    --surface2: #111927;
+    --border: rgba(0,200,120,0.15);
+    --green: #00c878;
+    --green-dim: rgba(0,200,120,0.08);
+    --red: #ff4757;
+    --red-dim: rgba(255,71,87,0.08);
+    --yellow: #ffd32a;
+    --blue: #3d9eff;
+    --text: #e8edf5;
+    --muted: #4a5568;
+    --mono: 'IBM Plex Mono', monospace;
+    --sans: 'IBM Plex Sans', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; }
+
+  /* HEADER */
+  header {
+    border-bottom: 1px solid var(--border);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky; top: 0;
+    background: rgba(8,12,20,0.95);
+    backdrop-filter: blur(10px);
+    z-index: 100;
+  }
+  .logo { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--green); letter-spacing: 0.05em; }
+  .logo span { color: var(--muted); font-weight: 400; }
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--mono); font-size: 11px; color: var(--green);
+    background: var(--green-dim); border: 1px solid rgba(0,200,120,0.3);
+    padding: 4px 10px; border-radius: 20px;
+  }
+  .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+
+  /* LAYOUT */
+  main { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+  /* METRIC CARDS */
+  .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .metric-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .metric-label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 8px; font-family: var(--mono); }
+  .metric-value { font-family: var(--mono); font-size: 22px; font-weight: 600; color: var(--text); }
+  .metric-value.green { color: var(--green); }
+  .metric-value.red { color: var(--red); }
+  .metric-sub { font-size: 11px; color: var(--muted); margin-top: 4px; font-family: var(--mono); }
+
+  /* SECTION */
+  .section-title {
+    font-family: var(--mono); font-size: 11px; text-transform: uppercase;
+    letter-spacing: 0.12em; color: var(--muted);
+    margin-bottom: 12px; padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* TWO COLUMNS */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* PLATFORM CARD */
+  .platform-card { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .platform-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .platform-name { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  .platform-pnl { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  .stat-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--muted); }
+  .stat-val { font-family: var(--mono); font-weight: 500; }
+
+  /* POSITIONS TABLE */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; margin-bottom: 24px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th { background: var(--surface2); padding: 10px 12px; text-align: left; font-family: var(--mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 500; }
+  td { padding: 10px 12px; border-top: 1px solid rgba(255,255,255,0.04); }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  .badge { padding: 2px 8px; border-radius: 4px; font-family: var(--mono); font-size: 10px; font-weight: 600; }
+  .badge-yes { background: var(--green-dim); color: var(--green); border: 1px solid rgba(0,200,120,0.3); }
+  .badge-no { background: var(--red-dim); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+  .badge-poly { background: rgba(61,158,255,0.1); color: var(--blue); border: 1px solid rgba(61,158,255,0.3); }
+  .badge-kal { background: rgba(255,211,42,0.1); color: var(--yellow); border: 1px solid rgba(255,211,42,0.3); }
+  .empty-state { text-align: center; padding: 32px; color: var(--muted); font-size: 13px; }
+
+  /* FOOTER */
+  footer { text-align: center; padding: 24px; font-size: 11px; color: var(--muted); font-family: var(--mono); border-top: 1px solid var(--border); margin-top: 16px; }
+
+  /* LOADING */
+  #loading { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 60vh; gap: 16px; }
+  .spinner { width: 32px; height: 32px; border: 2px solid var(--border); border-top-color: var(--green); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  #app { display: none; }
+
+  .last-updated { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+  .refresh-bar { height: 2px; background: var(--green-dim); position: fixed; top: 0; left: 0; transition: width 0.5s; }
+</style>
+</head>
+<body>
+
+<div class="refresh-bar" id="refreshBar"></div>
+
+<header>
+  <div class="logo">PM · <span>AI</span>AUTOPILOT</div>
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span class="last-updated" id="lastUpdated">cargando...</span>
+    <div class="status-pill"><div class="pulse"></div> LIVE</div>
+  </div>
+</header>
+
+<div id="loading">
+  <div class="spinner"></div>
+  <div style="font-family:var(--mono);font-size:12px;color:var(--muted);">Conectando con el bot...</div>
+</div>
+
+<main id="app">
+  <!-- COMBINED METRICS -->
+  <div style="margin-bottom:8px;"><span class="section-title">Portfolio combinado</span></div>
+  <div class="metrics-grid" id="metricsGrid"></div>
+
+  <!-- PLATFORMS -->
+  <div class="section-title" style="margin-top:8px;">Plataformas</div>
+  <div class="two-col" id="platformCards"></div>
+
+  <!-- OPEN POSITIONS -->
+  <div class="section-title">Posiciones abiertas</div>
+  <div class="table-wrap" id="positionsTable"></div>
+
+  <!-- RECENT TRADES -->
+  <div class="section-title">Trades recientes cerrados</div>
+  <div class="table-wrap" id="tradesTable"></div>
+</main>
+
+<footer id="footer"></footer>
+
+<script>
+const RAW_URL = 'https://raw.githubusercontent.com/bleuagile/prediction-markets-bot/main/public/latest-analysis.json';
+const REFRESH_MS = 5 * 60 * 1000;
+let refreshTimer = null;
+let lastTimestamp = null;
+
+function fmt$(n) { return '$' + Math.abs(n).toLocaleString('en', {minimumFractionDigits:2,maximumFractionDigits:2}); }
+function fmtPct(n) { return (n >= 0 ? '+' : '') + n.toFixed(2) + '%'; }
+function colorClass(n) { return n > 0 ? 'green' : n < 0 ? 'red' : ''; }
+function colorStyle(n) { return n > 0 ? `color:var(--green)` : n < 0 ? `color:var(--red)` : `color:var(--text)`; }
+function timeAgo(iso) {
+  const diff = (Date.now() - new Date(iso)) / 1000;
+  if (diff < 60) return Math.round(diff) + 's ago';
+  if (diff < 3600) return Math.round(diff/60) + 'm ago';
+  return Math.round(diff/3600) + 'h ago';
+}
+function truncate(s, n) { return s.length > n ? s.slice(0,n) + '…' : s; }
+
+async function fetchData() {
+  const res = await fetch(RAW_URL + '?t=' + Date.now());
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  return res.json();
+}
+
+function renderMetrics(data) {
+  const c = data.combined;
+  const pnlSign = c.totalPnL >= 0 ? '+' : '';
+  const cards = [
+    { label: 'Portfolio total', value: fmt$(c.totalValue), sub: 'Poly + Kalshi', cls: '' },
+    { label: 'P&L total', value: pnlSign + fmt$(c.totalPnL), sub: fmtPct(c.totalPnLPct), cls: colorClass(c.totalPnL) },
+    { label: 'Análisis #', value: data.analysisCount, sub: 'desde inicio', cls: '' },
+    { label: 'Sentimiento', value: c.sentiment.toUpperCase(), sub: 'mercado actual', cls: c.sentiment === 'bullish' ? 'green' : c.sentiment === 'bearish' ? 'red' : '' },
+  ];
+  document.getElementById('metricsGrid').innerHTML = cards.map(c => `
+    <div class="metric-card">
+      <div class="metric-label">${c.label}</div>
+      <div class="metric-value ${c.cls}">${c.value}</div>
+      <div class="metric-sub">${c.sub}</div>
+    </div>`).join('');
+}
+
+function renderPlatforms(data) {
+  const html = ['polymarket','kalshi'].map(key => {
+    const p = data.platforms[key];
+    const pnlSign = p.pnl >= 0 ? '+' : '';
+    const badge = key === 'polymarket' ? '<span class="badge badge-poly">POLYMARKET</span>' : '<span class="badge badge-kal">KALSHI</span>';
+    return `<div class="platform-card">
+      <div class="platform-header">
+        ${badge}
+        <span class="platform-pnl" style="${colorStyle(p.pnl)}">${pnlSign}${fmt$(p.pnl)}</span>
+      </div>
+      <div class="stat-row"><span class="stat-label">Portfolio</span><span class="stat-val">${fmt$(p.totalValue)}</span></div>
+      <div class="stat-row"><span class="stat-label">Cash disponible</span><span class="stat-val">${fmt$(p.cash)}</span></div>
+      <div class="stat-row"><span class="stat-label">P&L %</span><span class="stat-val" style="${colorStyle(p.pnl)}">${fmtPct(p.pnlPct)}</span></div>
+      <div class="stat-row"><span class="stat-label">Posiciones abiertas</span><span class="stat-val">${p.openPositions}</span></div>
+      <div class="stat-row"><span class="stat-label">Trades cerrados</span><span class="stat-val">${p.totalTrades}</span></div>
+      <div class="stat-row"><span class="stat-label">Win rate</span><span class="stat-val">${p.winRate}%</span></div>
+    </div>`;
+  }).join('');
+  document.getElementById('platformCards').innerHTML = html;
+}
+
+function renderPositions(data) {
+  const all = [
+    ...( data.positions.polymarket || []).map(p => ({...p, plat:'polymarket'})),
+    ...( data.positions.kalshi || []).map(p => ({...p, plat:'kalshi'}))
+  ];
+  if (all.length === 0) {
+    document.getElementById('positionsTable').innerHTML = '<div class="empty-state">No hay posiciones abiertas</div>';
+    return;
+  }
+  const rows = all.map(p => {
+    const pnlStyle = colorStyle(p.pnl || 0);
+    const pnlSign = (p.pnl || 0) >= 0 ? '+' : '';
+    const platBadge = p.plat === 'polymarket' ? '<span class="badge badge-poly">POLY</span>' : '<span class="badge badge-kal">KAL</span>';
+    const sideBadge = p.side === 'YES' ? '<span class="badge badge-yes">YES</span>' : '<span class="badge badge-no">NO</span>';
+    return `<tr>
+      <td>${platBadge}</td>
+      <td style="max-width:280px;color:var(--text)">${truncate(p.question, 60)}</td>
+      <td>${sideBadge}</td>
+      <td style="font-family:var(--mono)">${p.entryPrice.toFixed(3)}</td>
+      <td style="font-family:var(--mono)">${(p.currentPrice||p.entryPrice).toFixed(3)}</td>
+      <td style="font-family:var(--mono)">${fmt$(p.cost)}</td>
+      <td style="font-family:var(--mono);${pnlStyle}">${pnlSign}${fmt$(p.pnl||0)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('positionsTable').innerHTML = `
+    <table>
+      <thead><tr><th>Plat</th><th>Mercado</th><th>Lado</th><th>Entry</th><th>Current</th><th>Size</th><th>P&L</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function renderTrades(data) {
+  const all = [
+    ...( data.recentTrades.polymarket || []).map(t => ({...t, plat:'polymarket'})),
+    ...( data.recentTrades.kalshi || []).map(t => ({...t, plat:'kalshi'}))
+  ].sort((a,b) => new Date(b.closedAt) - new Date(a.closedAt)).slice(0, 15);
+
+  if (all.length === 0) {
+    document.getElementById('tradesTable').innerHTML = '<div class="empty-state">No hay trades cerrados aún</div>';
+    return;
+  }
+  const rows = all.map(t => {
+    const pnlStyle = colorStyle(t.pnl);
+    const pnlSign = t.pnl >= 0 ? '+' : '';
+    const platBadge = t.plat === 'polymarket' ? '<span class="badge badge-poly">POLY</span>' : '<span class="badge badge-kal">KAL</span>';
+    const sideBadge = t.side === 'YES' ? '<span class="badge badge-yes">YES</span>' : '<span class="badge badge-no">NO</span>';
+    const reasonColor = t.reason === 'TAKE_PROFIT' ? 'color:var(--green)' : 'color:var(--red)';
+    return `<tr>
+      <td>${platBadge}</td>
+      <td style="max-width:240px;color:var(--text)">${truncate(t.question||'', 50)}</td>
+      <td>${sideBadge}</td>
+      <td style="font-family:var(--mono);${pnlStyle}">${pnlSign}${fmt$(t.pnl)}</td>
+      <td style="font-family:var(--mono);font-size:10px;${reasonColor}">${t.reason}</td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--muted)">${timeAgo(t.closedAt)}</td>
+    </tr>`;
+  }).join('');
+  document.getElementById('tradesTable').innerHTML = `
+    <table>
+      <thead><tr><th>Plat</th><th>Mercado</th><th>Lado</th><th>P&L</th><th>Razón</th><th>Hace</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function startRefreshBar() {
+  let start = Date.now();
+  const bar = document.getElementById('refreshBar');
+  const tick = setInterval(() => {
+    const pct = Math.min(((Date.now() - start) / REFRESH_MS) * 100, 100);
+    bar.style.width = pct + '%';
+    if (pct >= 100) clearInterval(tick);
+  }, 1000);
+}
+
+async function load() {
+  try {
+    const data = await fetchData();
+    if (data.timestamp === lastTimestamp) return;
+    lastTimestamp = data.timestamp;
+
+    renderMetrics(data);
+    renderPlatforms(data);
+    renderPositions(data);
+    renderTrades(data);
+
+    const ts = new Date(data.timestamp);
+    document.getElementById('lastUpdated').textContent = 'actualizado ' + timeAgo(data.timestamp);
+    document.getElementById('footer').textContent =
+      `Bot corriendo 24/7 via GitHub Actions · análisis #${data.analysisCount} · ${ts.toLocaleString('es-PR')}`;
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+
+    startRefreshBar();
+  } catch(e) {
+    console.error('Error fetching data:', e);
+    document.getElementById('loading').innerHTML = `
+      <div style="font-family:var(--mono);font-size:12px;color:var(--red)">Error conectando con el bot</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:8px">${e.message}</div>
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px">Reintentando en 30s...</div>`;
+  }
+}
+
+load();
+setInterval(load, REFRESH_MS);
+</script>
+</body>
+</html>
