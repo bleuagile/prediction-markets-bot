@@ -147,7 +147,7 @@
         "currentPrice": 0.548,
         "shares": 115.39,
         "cost": 63.24,
-        "currentValue": 63.24,
+        "currentValue": 63.23,
         "pnl": 0,
         "edge": 0.053,
         "openedAt": "2026-04-12T15:54:54.915Z"
@@ -158,6 +158,6 @@
     "winningTrades": 0
   },
   "createdAt": "2025-04-12T00:00:00.000Z",
-  "lastUpdated": "2026-04-12T15:54:54.915Z",
-  "analysisCount": 9
+  "lastUpdated": "2026-04-12T17:54:04.215Z",
+  "analysisCount": 10
 }
