@@ -1,0 +1,21 @@
+{
+  "polymarket": {
+    "cash": 1000,
+    "startingCash": 1000,
+    "positions": [],
+    "closedTrades": [],
+    "totalTrades": 0,
+    "winningTrades": 0
+  },
+  "kalshi": {
+    "cash": 1000,
+    "startingCash": 1000,
+    "positions": [],
+    "closedTrades": [],
+    "totalTrades": 0,
+    "winningTrades": 0
+  },
+  "createdAt": "2025-04-12T00:00:00.000Z",
+  "lastUpdated": "2025-04-12T00:00:00.000Z",
+  "analysisCount": 0
+}
