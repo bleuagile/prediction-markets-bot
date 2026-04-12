@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 
 const PORTFOLIO_PATH = path.join(__dirname, 'public', 'portfolio.json');
 const ANALYSIS_PATH = path.join(__dirname, 'public', 'latest-analysis.json');
@@ -13,78 +14,114 @@ const CONFIG = {
   TAKE_PROFIT_PCT: 0.80,
 };
 
+// ─── KALSHI AUTH ─────────────────────────────────────────────
+
+function getKalshiHeaders(method, path) {
+  const keyId = process.env.KALSHI_API_KEY_ID;
+  const privateKey = process.env.KALSHI_PRIVATE_KEY;
+  if (!keyId || !privateKey) return { 'Accept': 'application/json' };
+
+  try {
+    const timestamp = Date.now().toString();
+    const msgString = timestamp + method.toUpperCase() + path;
+    const sign = crypto.createSign('RSA-SHA256');
+    sign.update(msgString);
+    sign.end();
+    const signature = sign.sign(privateKey, 'base64');
+    return {
+      'Accept': 'application/json',
+      'KALSHI-ACCESS-KEY': keyId,
+      'KALSHI-ACCESS-TIMESTAMP': timestamp,
+      'KALSHI-ACCESS-SIGNATURE': signature,
+    };
+  } catch (e) {
+    console.log('  Kalshi auth error:', e.message);
+    return { 'Accept': 'application/json' };
+  }
+}
+
+// ─── PORTFOLIO ───────────────────────────────────────────────
+
 function loadPortfolio() {
   try {
-    if (fs.existsSync(PORTFOLIO_PATH)) {
-      return JSON.parse(fs.readFileSync(PORTFOLIO_PATH, 'utf8'));
-    }
+    if (fs.existsSync(PORTFOLIO_PATH)) return JSON.parse(fs.readFileSync(PORTFOLIO_PATH, 'utf8'));
   } catch (e) {}
   return {
     polymarket: { cash: CONFIG.STARTING_CASH, startingCash: CONFIG.STARTING_CASH, positions: [], closedTrades: [], totalTrades: 0, winningTrades: 0 },
     kalshi: { cash: CONFIG.STARTING_CASH, startingCash: CONFIG.STARTING_CASH, positions: [], closedTrades: [], totalTrades: 0, winningTrades: 0 },
-    createdAt: new Date().toISOString(),
-    lastUpdated: new Date().toISOString(),
-    analysisCount: 0
+    createdAt: new Date().toISOString(), lastUpdated: new Date().toISOString(), analysisCount: 0
   };
 }
 
 function calcPortfolioValue(p) {
   return p.cash + p.positions.reduce((sum, pos) => sum + (pos.shares * pos.currentPrice), 0);
 }
-
 function calcPnL(p) { return calcPortfolioValue(p) - p.startingCash; }
-
 function calcWinRate(p) {
   if (p.totalTrades === 0) return 0;
   return parseFloat(((p.winningTrades / p.totalTrades) * 100).toFixed(1));
 }
 
+// ─── MARKET DATA ─────────────────────────────────────────────
+
 function getMockMarkets(platform) {
-  const seed = Date.now() % 1000;
+  const seed = Date.now() % 10000;
+  const vary = (base, range) => parseFloat(Math.min(0.97, Math.max(0.03, base + (((seed * 7 + range * 13) % 100) - 50) / 1000)).toFixed(4));
   return [
-    { id: `${platform}-fed`, question: 'Fed rate cut before June 2025?', yesPrice: 0.27 + (seed % 10) * 0.005, noPrice: 0.73, volume: 850000, platform },
-    { id: `${platform}-btc`, question: 'Bitcoin above $100k by July 2025?', yesPrice: 0.64 + (seed % 8) * 0.004, noPrice: 0.36, volume: 1200000, platform },
-    { id: `${platform}-recession`, question: 'US recession in 2025?', yesPrice: 0.18 + (seed % 6) * 0.003, noPrice: 0.82, volume: 430000, platform },
-    { id: `${platform}-sp500`, question: 'S&P 500 above 6000 end Q2?', yesPrice: 0.58 + (seed % 7) * 0.003, noPrice: 0.42, volume: 320000, platform },
-    { id: `${platform}-eth`, question: 'Ethereum above $4000 by August?', yesPrice: 0.43 + (seed % 9) * 0.004, noPrice: 0.57, volume: 280000, platform },
-    { id: `${platform}-trump`, question: 'Trump approval above 50% in May?', yesPrice: 0.31 + (seed % 5) * 0.004, noPrice: 0.69, volume: 190000, platform },
-    { id: `${platform}-nfl`, question: 'NFL Draft top pick QB?', yesPrice: 0.71 + (seed % 4) * 0.003, noPrice: 0.29, volume: 150000, platform },
+    { id: `${platform}-fed`, question: 'Fed rate cut before June 2025?', yesPrice: vary(0.27, 1), noPrice: vary(0.73, 2), volume: 850000, platform },
+    { id: `${platform}-btc`, question: 'Bitcoin above $100k by July 2025?', yesPrice: vary(0.64, 3), noPrice: vary(0.36, 4), volume: 1200000, platform },
+    { id: `${platform}-recession`, question: 'US recession in 2025?', yesPrice: vary(0.18, 5), noPrice: vary(0.82, 6), volume: 430000, platform },
+    { id: `${platform}-sp500`, question: 'S&P 500 above 6000 end Q2?', yesPrice: vary(0.58, 7), noPrice: vary(0.42, 8), volume: 320000, platform },
+    { id: `${platform}-eth`, question: 'Ethereum above $4000 by August?', yesPrice: vary(0.43, 9), noPrice: vary(0.57, 10), volume: 280000, platform },
+    { id: `${platform}-trump`, question: 'Trump approval above 50% in May?', yesPrice: vary(0.31, 11), noPrice: vary(0.69, 12), volume: 190000, platform },
+    { id: `${platform}-nfl`, question: 'NFL Draft top pick QB?', yesPrice: vary(0.71, 13), noPrice: vary(0.29, 14), volume: 150000, platform },
   ];
 }
 
 async function fetchPolymarketData() {
   try {
-    const res = await fetch('https://clob.polymarket.com/markets?next_cursor=&limit=20', { signal: AbortSignal.timeout(8000) });
+    const res = await fetch('https://gamma-api.polymarket.com/markets?closed=false&limit=20&order=volume&ascending=false&active=true', { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
+    if (!Array.isArray(data) || data.length === 0) throw new Error('No markets returned');
     const filtered = data.filter(m => m.volume > 5000 && m.outcomePrices).slice(0, 10).map(m => {
       let prices = [];
       try { prices = JSON.parse(m.outcomePrices); } catch(e) {}
-      return { id: m.id, question: m.question, volume: parseFloat(m.volume) || 0, yesPrice: parseFloat(prices[0]) || 0.5, noPrice: parseFloat(prices[1]) || 0.5, endDate: m.endDate, platform: 'polymarket' };
+      return { id: m.id, question: m.question, volume: parseFloat(m.volume) || 0, yesPrice: parseFloat(prices[0]) || 0.5, noPrice: parseFloat(prices[1]) || 0.5, platform: 'polymarket' };
     });
-    if (filtered.length > 0) { console.log(`  Polymarket API: ${filtered.length} mercados reales`); return filtered; }
-    throw new Error('No markets returned');
+    if (filtered.length === 0) throw new Error('No valid markets');
+    console.log(`  ✅ Polymarket: ${filtered.length} mercados reales`);
+    return filtered;
   } catch (e) {
-    console.log(`  Polymarket API falló (${e.message}), usando mock`);
+    console.log(`  ⚠️ Polymarket API falló (${e.message}), usando mock`);
     return getMockMarkets('polymarket');
   }
 }
 
 async function fetchKalshiData() {
+  const apiPath = '/trade-api/v2/markets?limit=20&status=open';
+  const headers = getKalshiHeaders('GET', apiPath);
   try {
-    const res = await fetch('https://trading-api.kalshi.com/trade-api/v2/markets?limit=20&status=open', { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
+    const res = await fetch(`https://trading-api.kalshi.com${apiPath}`, { headers, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    const filtered = (data.markets || []).filter(m => m.volume > 500).slice(0, 10).map(m => ({
+    if (!data.markets || data.markets.length === 0) throw new Error('No markets returned');
+    const filtered = data.markets.filter(m => m.volume > 100).slice(0, 10).map(m => ({
       id: m.ticker, question: m.title, volume: m.volume || 0,
-      yesPrice: (m.yes_bid || 50) / 100, noPrice: (m.no_bid || 50) / 100,
-      endDate: m.close_time, platform: 'kalshi'
+      yesPrice: Math.min(0.97, Math.max(0.03, (m.yes_bid || m.last_price || 50) / 100)),
+      noPrice: Math.min(0.97, Math.max(0.03, (m.no_bid || (100 - (m.last_price || 50))) / 100)),
+      platform: 'kalshi'
     }));
-    if (filtered.length > 0) { console.log(`  Kalshi API: ${filtered.length} mercados reales`); return filtered; }
-    throw new Error('No markets returned');
+    if (filtered.length === 0) throw new Error('No valid markets');
+    console.log(`  ✅ Kalshi: ${filtered.length} mercados reales`);
+    return filtered;
   } catch (e) {
-    console.log(`  Kalshi API falló (${e.message}), usando mock`);
+    console.log(`  ⚠️ Kalshi API falló (${e.message}), usando mock`);
     return getMockMarkets('kalshi');
   }
 }
+
+// ─── STRATEGY ────────────────────────────────────────────────
 
 function calculateEdge(market) {
   const y = market.yesPrice;
@@ -101,6 +138,8 @@ function calculateEdge(market) {
   if (eN > eY && eN > CONFIG.MIN_EDGE) return { action: 'BUY_NO', edge: eN, confidence: Math.min(eN * 8, 0.90) };
   return { action: 'HOLD', edge: 0, confidence: 0 };
 }
+
+// ─── TRADING ─────────────────────────────────────────────────
 
 function updateOpenPositions(portfolio, markets) {
   const mm = {};
@@ -130,15 +169,8 @@ function openNewPositions(portfolio, markets) {
   const opened = [];
   const openIds = new Set(portfolio.positions.map(p => p.marketId));
   if (portfolio.positions.length >= CONFIG.MAX_OPEN_POSITIONS || portfolio.cash < 15) return opened;
-
-  const opps = markets
-    .filter(m => !openIds.has(m.id))
-    .map(m => ({ market: m, signal: calculateEdge(m) }))
-    .filter(o => o.signal.action !== 'HOLD')
-    .sort((a, b) => b.signal.edge - a.signal.edge);
-
-  console.log(`  Oportunidades encontradas: ${opps.length}`);
-
+  const opps = markets.filter(m => !openIds.has(m.id)).map(m => ({ market: m, signal: calculateEdge(m) })).filter(o => o.signal.action !== 'HOLD').sort((a, b) => b.signal.edge - a.signal.edge);
+  console.log(`  Oportunidades: ${opps.length}`);
   for (const opp of opps) {
     if (portfolio.positions.length >= CONFIG.MAX_OPEN_POSITIONS || portfolio.cash < 15) break;
     const pv = calcPortfolioValue(portfolio);
@@ -151,20 +183,21 @@ function openNewPositions(portfolio, markets) {
     const pos = { marketId: opp.market.id, question: opp.market.question, platform: opp.market.platform, side: opp.signal.action === 'BUY_YES' ? 'YES' : 'NO', entryPrice: parseFloat(price.toFixed(4)), currentPrice: parseFloat(price.toFixed(4)), shares: parseFloat((actual / price).toFixed(2)), cost: parseFloat(actual.toFixed(2)), currentValue: parseFloat(actual.toFixed(2)), pnl: 0, edge: parseFloat(opp.signal.edge.toFixed(4)), openedAt: new Date().toISOString() };
     portfolio.positions.push(pos);
     opened.push(pos);
-    console.log(`  + OPEN ${pos.side} "${pos.question.slice(0, 45)}" @ ${price.toFixed(3)} $${actual.toFixed(2)} edge:${opp.signal.edge.toFixed(3)}`);
+    console.log(`  + OPEN ${pos.side} "${pos.question.slice(0, 45)}" @ ${price.toFixed(3)} $${actual.toFixed(2)}`);
   }
   return opened;
 }
 
+// ─── MAIN ────────────────────────────────────────────────────
+
 async function main() {
-  console.log('🤖 Prediction Markets AI Autopilot v2.1 — ' + new Date().toISOString());
+  console.log('🤖 Prediction Markets AI Autopilot v3 — ' + new Date().toISOString());
   fs.mkdirSync(path.join(__dirname, 'public'), { recursive: true });
 
   const portfolio = loadPortfolio();
   portfolio.analysisCount = (portfolio.analysisCount || 0) + 1;
 
   const [poly, kal] = await Promise.all([fetchPolymarketData(), fetchKalshiData()]);
-  console.log(`📊 Total mercados: Polymarket ${poly.length} | Kalshi ${kal.length}`);
 
   const results = {};
   for (const [key, markets] of [['polymarket', poly], ['kalshi', kal]]) {
@@ -173,7 +206,7 @@ async function main() {
     openNewPositions(plat, markets);
     const val = calcPortfolioValue(plat);
     const pnl = calcPnL(plat);
-    results[key] = { totalValue: parseFloat(val.toFixed(2)), cash: parseFloat(plat.cash.toFixed(2)), pnl: parseFloat(pnl.toFixed(2)), pnlPct: parseFloat(((pnl / plat.startingCash) * 100).toFixed(2)), openPositions: plat.positions.length, totalTrades: plat.totalTrades, winRate: calcWinRate(plat), };
+    results[key] = { totalValue: parseFloat(val.toFixed(2)), cash: parseFloat(plat.cash.toFixed(2)), pnl: parseFloat(pnl.toFixed(2)), pnlPct: parseFloat(((pnl / plat.startingCash) * 100).toFixed(2)), openPositions: plat.positions.length, totalTrades: plat.totalTrades, winRate: calcWinRate(plat) };
     console.log(`  ${key}: $${val.toFixed(2)} | P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} | Pos: ${plat.positions.length}`);
   }
 
@@ -189,11 +222,11 @@ async function main() {
     platforms: results,
     positions: { polymarket: portfolio.polymarket.positions, kalshi: portfolio.kalshi.positions },
     recentTrades: { polymarket: portfolio.polymarket.closedTrades.slice(0, 10), kalshi: portfolio.kalshi.closedTrades.slice(0, 10) },
-    meta: { source: 'github-actions-cron', version: '2.1.0' }
+    meta: { source: 'github-actions-cron', version: '3.0.0' }
   };
 
   fs.writeFileSync(ANALYSIS_PATH, JSON.stringify(analysis, null, 2));
-  console.log(`✅ Análisis #${portfolio.analysisCount} completo | Total: $${cv.toFixed(2)} | P&L: ${cp >= 0 ? '+' : ''}$${cp.toFixed(2)}`);
+  console.log(`✅ Análisis #${portfolio.analysisCount} | Total: $${cv.toFixed(2)} | P&L: ${cp >= 0 ? '+' : ''}$${cp.toFixed(2)}`);
 }
 
 main().catch(err => { console.error('❌ Error:', err); process.exit(1); });
