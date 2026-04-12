@@ -1,20 +1,185 @@
 {
-  "timestamp": "2025-04-01T00:00:00.000Z",
+  "timestamp": "2026-04-12T13:16:03.422Z",
   "analysis": {
-    "summary": "Sistema inicializado. El primer análisis real correrá en los próximos 5 minutos.",
+    "summary": "Análisis automático basado en reglas. Mercados con alto volumen muestran actividad moderada.",
     "sentiment": "neutral",
-    "confidence": 0.5,
-    "polymarket_picks": [],
-    "kalshi_picks": [],
-    "risk_level": "low",
-    "next_key_events": ["Primer análisis automático pendiente"]
+    "confidence": 0.6,
+    "polymarket_picks": [
+      {
+        "market": "Exact Score: FC Bayern München 3 - 1 Real Madrid CF?",
+        "action": "HOLD",
+        "amount": 20,
+        "reasoning": "Volumen insuficiente para posición clara",
+        "expectedReturn": 0.05
+      },
+      {
+        "market": "Will Real Sociedad qualify for the League Phase of the 2026-27 UEFA Champions League?",
+        "action": "HOLD",
+        "amount": 20,
+        "reasoning": "Volumen insuficiente para posición clara",
+        "expectedReturn": 0.05
+      }
+    ],
+    "kalshi_picks": [
+      {
+        "market": "yes Carlos Alcaraz,yes Diego Dedura-Palomero,yes Cameron Norrie,yes Marco Trungelliti",
+        "action": "HOLD",
+        "amount": 15,
+        "reasoning": "Esperando confirmación de tendencia",
+        "expectedReturn": 0.04
+      },
+      {
+        "market": "yes Dallas,yes Los Angeles C,yes Minnesota,yes Oklahoma City,no Miami wins by over 12.5 points,no San Antonio wins by over 23.5 points,no Detroit wins by over 24.5 points,yes Portland wins by over 5.5 points,no Los Angeles L wins by over 26.5 points",
+        "action": "HOLD",
+        "amount": 15,
+        "reasoning": "Esperando confirmación de tendencia",
+        "expectedReturn": 0.04
+      }
+    ],
+    "risk_level": "medium",
+    "next_key_events": [
+      "Decisión Fed próxima reunión",
+      "Datos CPI mensual"
+    ]
   },
   "markets": {
-    "polymarket": [],
-    "kalshi": []
+    "polymarket": [
+      {
+        "id": "1912422",
+        "question": "Exact Score: FC Bayern München 3 - 1 Real Madrid CF?",
+        "volume": "99.99999199999999",
+        "outcomePrices": "[\"0.105\", \"0.895\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-04-15T19:00:00Z"
+      },
+      {
+        "id": "1834907",
+        "question": "Will Real Sociedad qualify for the League Phase of the 2026-27 UEFA Champions League?",
+        "volume": "99.995116",
+        "outcomePrices": "[\"0.13\", \"0.87\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-09-01T00:00:00Z"
+      },
+      {
+        "id": "1746051",
+        "question": "Will Wadi Degla SC win on 2026-04-13?",
+        "volume": "99.99000000000001",
+        "outcomePrices": "[\"0.455\", \"0.545\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-04-13T14:00:00Z"
+      },
+      {
+        "id": "1835999",
+        "question": "Will Cremonese qualify for the League Phase of the 2026-27 UEFA Europa League?",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.49\", \"0.51\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-09-01T00:00:00Z"
+      },
+      {
+        "id": "1835921",
+        "question": "Will Bologna qualify for the League Phase of the 2026-27 UEFA Champions League?",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.095\", \"0.905\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-09-01T00:00:00Z"
+      },
+      {
+        "id": "1922980",
+        "question": "Abde Ezzalzouli: Anytime Goalscorer",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.995\", \"0.005\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-04-12T12:00:00Z"
+      },
+      {
+        "id": "1835936",
+        "question": "Will Torino qualify for the League Phase of the 2026-27 UEFA Champions League?",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.095\", \"0.905\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-09-01T00:00:00Z"
+      },
+      {
+        "id": "1907851",
+        "question": "Gabriel Strefezza: Anytime Goalscorer",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.9945\", \"0.0055\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-04-12T13:00:00Z"
+      },
+      {
+        "id": "1835722",
+        "question": "Will Borussia Dortmund qualify for the League Phase of the 2026-27 UEFA Conference League?",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.045\", \"0.955\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-08-31T00:00:00Z"
+      },
+      {
+        "id": "1836062",
+        "question": "Will Cremonese qualify for the League Phase of the 2026-27 UEFA Conference League?",
+        "volume": "99.99",
+        "outcomePrices": "[\"0.485\", \"0.515\"]",
+        "outcomes": "[\"Yes\", \"No\"]",
+        "endDate": "2026-09-01T00:00:00Z"
+      }
+    ],
+    "kalshi": [
+      {
+        "id": "KXMVESPORTSMULTIGAMEEXTENDED-S2026116DA5F66A9-25F01D918D1",
+        "question": "yes Carlos Alcaraz,yes Diego Dedura-Palomero,yes Cameron Norrie,yes Marco Trungelliti",
+        "closeDate": "2026-04-26T09:00:00Z"
+      },
+      {
+        "id": "KXMVECROSSCATEGORY-S202697A9FD0571E-CFCA1406AAE",
+        "question": "yes Dallas,yes Los Angeles C,yes Minnesota,yes Oklahoma City,no Miami wins by over 12.5 points,no San Antonio wins by over 23.5 points,no Detroit wins by over 24.5 points,yes Portland wins by over 5.5 points,no Los Angeles L wins by over 26.5 points",
+        "closeDate": "2026-04-27T00:30:00Z"
+      },
+      {
+        "id": "KXMVECROSSCATEGORY-S2026A1150B968A3-1D1142D819C",
+        "question": "yes Hao-Tong Li,yes Jason Day,yes Justin Rose,yes Rory McIlroy,yes Shane Lowry,yes Scottie Scheffler,yes Collin Morikawa,yes Jake Knapp,yes Patrick Cantlay,yes Patrick Reed,yes Russell Henley,yes Cameron Young,yes Sam Burns",
+        "closeDate": "2026-04-26T23:00:00Z"
+      },
+      {
+        "id": "KXMVESPORTSMULTIGAMEEXTENDED-S202682FA554F6D7-6F3854A461A",
+        "question": "yes Nickeil Alexander-Walker: 3+,yes LaMelo Ball: 3+,yes Jalen Johnson: 6+,yes LaMelo Ball: 6+,yes Nickeil Alexander-Walker: 15+,yes LaMelo Ball: 20+,yes Victor Wembanyama: 20+,yes Darius Garland: 15+,yes Kawhi Leonard: 20+,yes Jalen Johnson: 8+,yes Bam Adebayo: 8+,yes Cooper Flagg: 6+,yes Victor Wembanyama: 8+,yes Donovan Clingan: 10+",
+        "closeDate": "2026-04-26T22:00:00Z"
+      },
+      {
+        "id": "KXMVESPORTSMULTIGAMEEXTENDED-S20265F8BE3BA839-AA1891F9548",
+        "question": "yes Philadelphia,yes Gunnar Henderson: 2+",
+        "closeDate": "2026-04-15T14:00:00Z"
+      },
+      {
+        "id": "KXMVESPORTSMULTIGAMEEXTENDED-S202659922D151EB-8A7B8ED5068",
+        "question": "yes Boston,yes Los Angeles L,yes Over 243.5 points scored,yes Over 219.5 points scored",
+        "closeDate": "2026-04-26T22:00:00Z"
+      },
+      {
+        "id": "KXMVECROSSCATEGORY-S20263744E8F231D-5D56E118C54",
+        "question": "yes Yes,yes Yes,yes Yes",
+        "closeDate": "2026-04-15T14:00:00Z"
+      },
+      {
+        "id": "KXMVESPORTSMULTIGAMEEXTENDED-S2026997938D0AB7-DB0B5659DD6",
+        "question": "yes Nickeil Alexander-Walker: 3+,yes LaMelo Ball: 3+,yes Jalen Johnson: 6+,yes LaMelo Ball: 6+,yes Nickeil Alexander-Walker: 15+,yes LaMelo Ball: 20+,yes Victor Wembanyama: 20+,yes Kawhi Leonard: 20+,yes Jalen Johnson: 8+,yes Bam Adebayo: 8+,yes Cooper Flagg: 6+,yes Victor Wembanyama: 8+,yes Donovan Clingan: 10+",
+        "closeDate": "2026-04-26T22:00:00Z"
+      },
+      {
+        "id": "KXMVECROSSCATEGORY-S20265FBCA1D2A02-2A709CABC88",
+        "question": "yes Toronto,yes Charlotte,yes Detroit,yes Houston,yes Philadelphia,yes Minnesota,yes Orlando,yes Portland",
+        "closeDate": "2026-04-26T22:00:00Z"
+      },
+      {
+        "id": "KXMVESPORTSMULTIGAMEEXTENDED-S2026BB8DD93928D-8FD3E7391B6",
+        "question": "yes Both Teams To Score,yes Nottingham,yes Both Teams To Score,yes Tie",
+        "closeDate": "2026-04-26T13:00:00Z"
+      }
+    ]
   },
   "meta": {
-    "source": "initial-seed",
+    "source": "github-actions-cron",
     "version": "1.0.0",
     "nextRunIn": "5 minutos"
   }
