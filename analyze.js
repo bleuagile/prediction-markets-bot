@@ -12,11 +12,11 @@ const ANALYSIS_PATH = path.join(__dirname, 'public', 'latest-analysis.json');
 
 const CONFIG = {
   STARTING_CASH: 1000,
-  MAX_POSITION_PCT: 0.10,   // máximo 10% del portfolio por posición
-  MIN_EDGE: 0.05,            // mínimo 5% de edge para entrar
-  MAX_OPEN_POSITIONS: 8,     // máximo posiciones abiertas simultáneas
-  STOP_LOSS_PCT: 0.40,       // cerrar si pierde 40% del valor
-  TAKE_PROFIT_PCT: 0.80,     // cerrar si gana 80% del valor
+  MAX_POSITION_PCT: 0.15,
+  MIN_EDGE: 0.02,
+  MAX_OPEN_POSITIONS: 10,
+  STOP_LOSS_PCT: 0.40,
+  TAKE_PROFIT_PCT: 0.80,
   PLATFORMS: ['polymarket', 'kalshi']
 };
 
@@ -30,22 +30,8 @@ function loadPortfolio() {
   } catch (e) { console.log('Portfolio no encontrado, creando nuevo...'); }
 
   return {
-    polymarket: {
-      cash: CONFIG.STARTING_CASH,
-      startingCash: CONFIG.STARTING_CASH,
-      positions: [],
-      closedTrades: [],
-      totalTrades: 0,
-      winningTrades: 0
-    },
-    kalshi: {
-      cash: CONFIG.STARTING_CASH,
-      startingCash: CONFIG.STARTING_CASH,
-      positions: [],
-      closedTrades: [],
-      totalTrades: 0,
-      winningTrades: 0
-    },
+    polymarket: { cash: CONFIG.STARTING_CASH, startingCash: CONFIG.STARTING_CASH, positions: [], closedTrades: [], totalTrades: 0, winningTrades: 0 },
+    kalshi: { cash: CONFIG.STARTING_CASH, startingCash: CONFIG.STARTING_CASH, positions: [], closedTrades: [], totalTrades: 0, winningTrades: 0 },
     createdAt: new Date().toISOString(),
     lastUpdated: new Date().toISOString(),
     analysisCount: 0
@@ -76,7 +62,7 @@ async function fetchPolymarketData() {
     );
     const data = await res.json();
     return data
-      .filter(m => m.volume > 10000 && m.outcomePrices)
+      .filter(m => m.volume > 5000 && m.outcomePrices)
       .slice(0, 10)
       .map(m => {
         let prices = [];
@@ -92,7 +78,7 @@ async function fetchPolymarketData() {
         };
       });
   } catch (e) {
-    console.log('Polymarket API error:', e.message);
+    console.log('Polymarket API error, usando mock:', e.message);
     return getMockMarkets('polymarket');
   }
 }
@@ -105,7 +91,7 @@ async function fetchKalshiData() {
     );
     const data = await res.json();
     return (data.markets || [])
-      .filter(m => m.volume > 1000)
+      .filter(m => m.volume > 500)
       .slice(0, 10)
       .map(m => ({
         id: m.ticker,
@@ -117,47 +103,47 @@ async function fetchKalshiData() {
         platform: 'kalshi'
       }));
   } catch (e) {
-    console.log('Kalshi API error:', e.message);
+    console.log('Kalshi API error, usando mock:', e.message);
     return getMockMarkets('kalshi');
   }
 }
 
 function getMockMarkets(platform) {
-  const markets = [
-    { id: `${platform}-1`, question: 'Fed rate cut before June 2025?', yesPrice: 0.32, noPrice: 0.68, volume: 850000, endDate: '2025-06-30' },
-    { id: `${platform}-2`, question: 'Bitcoin above $100k by July 2025?', yesPrice: 0.61, noPrice: 0.39, volume: 1200000, endDate: '2025-07-31' },
-    { id: `${platform}-3`, question: 'US recession declared in 2025?', yesPrice: 0.22, noPrice: 0.78, volume: 430000, endDate: '2025-12-31' },
-    { id: `${platform}-4`, question: 'S&P 500 above 6000 end of Q2?', yesPrice: 0.55, noPrice: 0.45, volume: 320000, endDate: '2025-06-30' },
-    { id: `${platform}-5`, question: 'Ethereum above $4000 by August?', yesPrice: 0.48, noPrice: 0.52, volume: 280000, endDate: '2025-08-31' },
+  return [
+    { id: `${platform}-1`, question: 'Fed rate cut before June 2025?', yesPrice: 0.28, noPrice: 0.72, volume: 850000, endDate: '2025-06-30', platform },
+    { id: `${platform}-2`, question: 'Bitcoin above $100k by July 2025?', yesPrice: 0.63, noPrice: 0.37, volume: 1200000, endDate: '2025-07-31', platform },
+    { id: `${platform}-3`, question: 'US recession declared in 2025?', yesPrice: 0.19, noPrice: 0.81, volume: 430000, endDate: '2025-12-31', platform },
+    { id: `${platform}-4`, question: 'S&P 500 above 6000 end of Q2?', yesPrice: 0.57, noPrice: 0.43, volume: 320000, endDate: '2025-06-30', platform },
+    { id: `${platform}-5`, question: 'Ethereum above $4000 by August?', yesPrice: 0.44, noPrice: 0.56, volume: 280000, endDate: '2025-08-31', platform },
   ];
-  return markets.map(m => ({ ...m, platform }));
 }
 
 // ─── STRATEGY ENGINE ────────────────────────────────────────
 
 function calculateEdge(market) {
-  // Edge = desviación del precio justo estimado
-  // Modelo simple basado en volumen y precio extremo
   const yesPrice = market.yesPrice;
   const noPrice = market.noPrice;
 
-  // Precios muy extremos (< 0.15 o > 0.85) tienden a estar mal priceados
   let fairValueYes = yesPrice;
-  if (yesPrice < 0.15) fairValueYes = yesPrice * 1.15;
-  if (yesPrice > 0.85) fairValueYes = yesPrice * 0.95;
 
-  // Ajuste por volumen (más volumen = precio más eficiente)
-  const volumeAdjust = market.volume > 500000 ? 0.98 : 1.02;
-  fairValueYes = fairValueYes * volumeAdjust;
+  // Precios extremos están frecuentemente mal priceados
+  if (yesPrice < 0.20) fairValueYes = yesPrice * 1.18;
+  else if (yesPrice < 0.35) fairValueYes = yesPrice * 1.08;
+  else if (yesPrice > 0.80) fairValueYes = yesPrice * 0.93;
+  else if (yesPrice > 0.65) fairValueYes = yesPrice * 0.97;
+
+  // Ajuste por volumen
+  const volumeAdjust = market.volume > 500000 ? 0.99 : market.volume > 100000 ? 1.01 : 1.03;
+  fairValueYes = Math.min(Math.max(fairValueYes * volumeAdjust, 0.01), 0.99);
 
   const edgeYes = fairValueYes - yesPrice;
   const edgeNo = (1 - fairValueYes) - noPrice;
 
   if (edgeYes > edgeNo && edgeYes > CONFIG.MIN_EDGE) {
-    return { action: 'BUY_YES', edge: edgeYes, confidence: Math.min(edgeYes * 5, 0.95) };
+    return { action: 'BUY_YES', edge: edgeYes, confidence: Math.min(edgeYes * 8, 0.95) };
   }
   if (edgeNo > edgeYes && edgeNo > CONFIG.MIN_EDGE) {
-    return { action: 'BUY_NO', edge: edgeNo, confidence: Math.min(edgeNo * 5, 0.95) };
+    return { action: 'BUY_NO', edge: edgeNo, confidence: Math.min(edgeNo * 8, 0.95) };
   }
   return { action: 'HOLD', edge: 0, confidence: 0 };
 }
@@ -165,7 +151,7 @@ function calculateEdge(market) {
 function calcPositionSize(portfolio, confidence) {
   const portfolioValue = calcPortfolioValue(portfolio);
   const basePct = CONFIG.MAX_POSITION_PCT * confidence;
-  return Math.min(portfolioValue * basePct, portfolio.cash * 0.5);
+  return Math.min(portfolioValue * basePct, portfolio.cash * 0.4, 150);
 }
 
 // ─── TRADING LOGIC ──────────────────────────────────────────
@@ -179,8 +165,6 @@ function updateOpenPositions(portfolio, markets) {
 
   portfolio.positions.forEach(pos => {
     const market = marketMap[pos.marketId];
-
-    // Actualizar precio actual
     if (market) {
       pos.currentPrice = pos.side === 'YES' ? market.yesPrice : market.noPrice;
     }
@@ -188,9 +172,8 @@ function updateOpenPositions(portfolio, markets) {
     const costBasis = pos.shares * pos.entryPrice;
     const currentValue = pos.shares * pos.currentPrice;
     const pnl = currentValue - costBasis;
-    const pnlPct = pnl / costBasis;
+    const pnlPct = costBasis > 0 ? pnl / costBasis : 0;
 
-    // Check stop loss / take profit
     if (pnlPct <= -CONFIG.STOP_LOSS_PCT || pnlPct >= CONFIG.TAKE_PROFIT_PCT) {
       portfolio.cash += currentValue;
       portfolio.totalTrades++;
@@ -224,9 +207,8 @@ function openNewPositions(portfolio, markets) {
   const openIds = new Set(portfolio.positions.map(p => p.marketId));
 
   if (portfolio.positions.length >= CONFIG.MAX_OPEN_POSITIONS) return openedNow;
-  if (portfolio.cash < 20) return openedNow;
+  if (portfolio.cash < 15) return openedNow;
 
-  // Ordenar mercados por edge
   const opportunities = markets
     .filter(m => !openIds.has(m.id))
     .map(m => ({ market: m, signal: calculateEdge(m) }))
@@ -235,16 +217,17 @@ function openNewPositions(portfolio, markets) {
 
   for (const opp of opportunities) {
     if (portfolio.positions.length >= CONFIG.MAX_OPEN_POSITIONS) break;
-    if (portfolio.cash < 20) break;
+    if (portfolio.cash < 15) break;
 
     const size = calcPositionSize(portfolio, opp.signal.confidence);
     if (size < 10) continue;
 
     const price = opp.signal.action === 'BUY_YES' ? opp.market.yesPrice : opp.market.noPrice;
-    if (price <= 0 || price >= 1) continue;
+    if (price <= 0.01 || price >= 0.99) continue;
 
-    const shares = size / price;
-    portfolio.cash -= size;
+    const actualSize = Math.min(size, portfolio.cash);
+    const shares = actualSize / price;
+    portfolio.cash -= actualSize;
 
     const position = {
       marketId: opp.market.id,
@@ -254,8 +237,8 @@ function openNewPositions(portfolio, markets) {
       entryPrice: parseFloat(price.toFixed(4)),
       currentPrice: parseFloat(price.toFixed(4)),
       shares: parseFloat(shares.toFixed(2)),
-      cost: parseFloat(size.toFixed(2)),
-      currentValue: parseFloat(size.toFixed(2)),
+      cost: parseFloat(actualSize.toFixed(2)),
+      currentValue: parseFloat(actualSize.toFixed(2)),
       pnl: 0,
       edge: parseFloat(opp.signal.edge.toFixed(4)),
       openedAt: new Date().toISOString()
@@ -263,7 +246,7 @@ function openNewPositions(portfolio, markets) {
 
     portfolio.positions.push(position);
     openedNow.push(position);
-    console.log(`  + OPEN ${position.side} ${position.question.slice(0, 50)} @ ${price.toFixed(3)} size $${size.toFixed(2)}`);
+    console.log(`  + OPEN ${position.side} "${position.question.slice(0, 50)}" @ ${price.toFixed(3)} size $${actualSize.toFixed(2)}`);
   }
 
   return openedNow;
@@ -278,15 +261,13 @@ async function main() {
   const portfolio = loadPortfolio();
   portfolio.analysisCount = (portfolio.analysisCount || 0) + 1;
 
-  // Fetch market data
   console.log('📡 Fetching market data...');
   const [polymarkets, kalshiMarkets] = await Promise.all([
     fetchPolymarketData(),
     fetchKalshiData()
   ]);
-  console.log(`  Polymarket: ${polymarkets.length} mercados | Kalshi: ${kalshiMarkets.length} mercados`);
+  console.log(`  Polymarket: ${polymarkets.length} | Kalshi: ${kalshiMarkets.length}`);
 
-  // Process each platform
   const results = {};
   for (const [platformKey, markets] of [['polymarket', polymarkets], ['kalshi', kalshiMarkets]]) {
     console.log(`\n💼 Processing ${platformKey}...`);
@@ -310,23 +291,18 @@ async function main() {
       openedThisRun: opened.length
     };
 
-    console.log(`  Portfolio: $${totalValue.toFixed(2)} | P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} | Positions: ${plat.positions.length}`);
+    console.log(`  Portfolio: $${totalValue.toFixed(2)} | P&L: ${pnl >= 0 ? '+' : ''}$${pnl.toFixed(2)} | Posiciones: ${plat.positions.length}`);
   }
 
-  // Combined stats
   const combinedValue = results.polymarket.totalValue + results.kalshi.totalValue;
   const combinedPnL = results.polymarket.pnl + results.kalshi.pnl;
   const combinedStart = CONFIG.STARTING_CASH * 2;
+  const sentiment = combinedPnL > 20 ? 'bullish' : combinedPnL < -20 ? 'bearish' : 'neutral';
 
   portfolio.lastUpdated = new Date().toISOString();
 
-  // Determine market sentiment
-  const sentiment = combinedPnL > 50 ? 'bullish' : combinedPnL < -50 ? 'bearish' : 'neutral';
-
-  // Save portfolio state
   fs.writeFileSync(PORTFOLIO_PATH, JSON.stringify(portfolio, null, 2));
 
-  // Save analysis summary
   const analysis = {
     timestamp: new Date().toISOString(),
     analysisCount: portfolio.analysisCount,
@@ -345,20 +321,14 @@ async function main() {
       polymarket: portfolio.polymarket.closedTrades.slice(0, 10),
       kalshi: portfolio.kalshi.closedTrades.slice(0, 10)
     },
-    meta: {
-      source: 'github-actions-cron',
-      version: '2.0.0',
-      nextRunIn: '5 minutos'
-    }
+    meta: { source: 'github-actions-cron', version: '2.1.0', nextRunIn: '5 minutos' }
   };
 
   fs.writeFileSync(ANALYSIS_PATH, JSON.stringify(analysis, null, 2));
-
-  console.log(`\n✅ Listo. Portfolio total: $${combinedValue.toFixed(2)} | P&L: ${combinedPnL >= 0 ? '+' : ''}$${combinedPnL.toFixed(2)}`);
-  console.log(`📊 Análisis #${portfolio.analysisCount} completado. Próximo en ~5 minutos.`);
+  console.log(`\n✅ Análisis #${portfolio.analysisCount} | Portfolio: $${combinedValue.toFixed(2)} | P&L: ${combinedPnL >= 0 ? '+' : ''}$${combinedPnL.toFixed(2)}`);
 }
 
 main().catch(err => {
-  console.error('❌ Error fatal:', err);
+  console.error('❌ Error:', err);
   process.exit(1);
 });
