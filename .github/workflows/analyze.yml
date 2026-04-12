@@ -14,6 +14,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -30,5 +32,4 @@ jobs:
           git add public/portfolio.json public/latest-analysis.json
           git diff --staged --quiet && exit 0
           git commit -m "📊 Trade cycle $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git pull --rebase origin main
-          git push
+          git push --force-with-lease
