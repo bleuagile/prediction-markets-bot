@@ -16,6 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -26,10 +27,7 @@ jobs:
         run: node analyze.js
 
       - name: Commit & push results
-        run: |
-          git config user.name "AI Autopilot Bot"
-          git config user.email "bot@prediction-markets.app"
-          git add public/portfolio.json public/latest-analysis.json
-          git diff --staged --quiet && exit 0
-          git commit -m "📊 Trade cycle $(date -u '+%Y-%m-%d %H:%M UTC')"
-          git push --force-with-lease
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "📊 Trade cycle"
+          file_pattern: public/portfolio.json public/latest-analysis.json
