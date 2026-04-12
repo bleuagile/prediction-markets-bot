@@ -24,6 +24,9 @@ jobs:
           node-version: '24'
 
       - name: Run trading engine
+        env:
+          KALSHI_API_KEY_ID: ${{ secrets.KALSHI_API_KEY_ID }}
+          KALSHI_PRIVATE_KEY: ${{ secrets.KALSHI_PRIVATE_KEY }}
         run: node analyze.js
 
       - name: Commit & push results
