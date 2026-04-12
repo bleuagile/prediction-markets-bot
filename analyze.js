@@ -71,7 +71,7 @@ async function fetchPolymarketData() {
 
 async function fetchKalshiData() {
   try {
-    const res = await fetch('https://api.elections.kalshi.com/trade-api/v2/markets?limit=20&status=open', { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
+    const res = await fetch('https://trading-api.kalshi.com/trade-api/v2/markets?limit=20&status=open', { headers: { 'Accept': 'application/json' }, signal: AbortSignal.timeout(8000) });
     const data = await res.json();
     const filtered = (data.markets || []).filter(m => m.volume > 500).slice(0, 10).map(m => ({
       id: m.ticker, question: m.title, volume: m.volume || 0,
