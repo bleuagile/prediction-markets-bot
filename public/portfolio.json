@@ -51,7 +51,7 @@
     "winningTrades": 0
   },
   "kalshi": {
-    "cash": 823.8965115724891,
+    "cash": 783.2906569910306,
     "startingCash": 1000,
     "positions": [
       {
@@ -60,11 +60,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.195,
-        "currentPrice": 0.155,
+        "currentPrice": 0.228,
         "shares": 254.4,
         "cost": 49.61,
-        "currentValue": 39.43,
-        "pnl": -10.18,
+        "currentValue": 58,
+        "pnl": 8.4,
         "edge": 0.0413,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -74,11 +74,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.322,
-        "currentPrice": 0.263,
+        "currentPrice": 0.336,
         "shares": 133.2,
         "cost": 42.89,
-        "currentValue": 35.03,
-        "pnl": -7.86,
+        "currentValue": 44.76,
+        "pnl": 1.86,
         "edge": 0.0357,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -88,11 +88,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.285,
-        "currentPrice": 0.293,
+        "currentPrice": 0.266,
         "shares": 106.8,
         "cost": 30.44,
-        "currentValue": 31.29,
-        "pnl": 0.85,
+        "currentValue": 28.41,
+        "pnl": -2.03,
         "edge": 0.0254,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -102,11 +102,11 @@
         "platform": "kalshi",
         "side": "NO",
         "entryPrice": 0.29,
-        "currentPrice": 0.282,
+        "currentPrice": 0.255,
         "shares": 89.16,
         "cost": 25.86,
-        "currentValue": 25.14,
-        "pnl": -0.71,
+        "currentValue": 22.74,
+        "pnl": -3.12,
         "edge": 0.0216,
         "openedAt": "2026-04-12T15:02:10.962Z"
       },
@@ -116,13 +116,27 @@
         "platform": "kalshi",
         "side": "NO",
         "entryPrice": 0.322,
-        "currentPrice": 0.322,
+        "currentPrice": 0.395,
         "shares": 84.82,
         "cost": 27.31,
-        "currentValue": 27.31,
-        "pnl": 0,
+        "currentValue": 33.5,
+        "pnl": 6.19,
         "edge": 0.0232,
         "openedAt": "2026-04-12T15:31:47.881Z"
+      },
+      {
+        "marketId": "kalshi-sp500",
+        "question": "S&P 500 above 6000 end Q2?",
+        "platform": "kalshi",
+        "side": "NO",
+        "entryPrice": 0.407,
+        "currentPrice": 0.407,
+        "shares": 99.77,
+        "cost": 40.61,
+        "currentValue": 40.61,
+        "pnl": 0,
+        "edge": 0.0335,
+        "openedAt": "2026-04-12T15:35:16.620Z"
       }
     ],
     "closedTrades": [],
@@ -130,6 +144,6 @@
     "winningTrades": 0
   },
   "createdAt": "2025-04-12T00:00:00.000Z",
-  "lastUpdated": "2026-04-12T15:31:47.881Z",
-  "analysisCount": 6
+  "lastUpdated": "2026-04-12T15:35:16.620Z",
+  "analysisCount": 7
 }
