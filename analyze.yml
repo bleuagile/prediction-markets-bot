@@ -1,0 +1,32 @@
+name: Prediction Markets AI Autopilot
+
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Run trading engine
+        run: node analyze.js
+
+      - name: Commit & push results
+        run: |
+          git config user.name "AI Autopilot Bot"
+          git config user.email "bot@prediction-markets.app"
+          git add public/portfolio.json public/latest-analysis.json
+          git diff --staged --quiet || git commit -m "📊 Trade cycle $(date -u '+%Y-%m-%d %H:%M UTC')"
+          git push
