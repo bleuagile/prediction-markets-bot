@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-04-12T15:02:10.963Z",
-  "analysisCount": 5,
+  "timestamp": "2026-04-12T15:31:47.881Z",
+  "analysisCount": 6,
   "combined": {
-    "totalValue": 1992.99,
-    "totalPnL": -7.01,
-    "totalPnLPct": -0.35,
-    "sentiment": "neutral"
+    "totalValue": 1976.85,
+    "totalPnL": -23.15,
+    "totalPnLPct": -1.16,
+    "sentiment": "bearish"
   },
   "platforms": {
     "polymarket": {
@@ -18,11 +18,11 @@
       "winRate": 0
     },
     "kalshi": {
-      "totalValue": 998.25,
-      "cash": 851.21,
-      "pnl": -1.75,
-      "pnlPct": -0.18,
-      "openPositions": 4,
+      "totalValue": 982.11,
+      "cash": 823.9,
+      "pnl": -17.89,
+      "pnlPct": -1.79,
+      "openPositions": 5,
       "totalTrades": 0,
       "winRate": 0
     }
@@ -79,11 +79,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.195,
-        "currentPrice": 0.186,
+        "currentPrice": 0.155,
         "shares": 254.4,
         "cost": 49.61,
-        "currentValue": 47.32,
-        "pnl": -2.29,
+        "currentValue": 39.43,
+        "pnl": -10.18,
         "edge": 0.0413,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -93,11 +93,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.322,
-        "currentPrice": 0.314,
+        "currentPrice": 0.263,
         "shares": 133.2,
         "cost": 42.89,
-        "currentValue": 41.82,
-        "pnl": -1.07,
+        "currentValue": 35.03,
+        "pnl": -7.86,
         "edge": 0.0357,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -107,11 +107,11 @@
         "platform": "kalshi",
         "side": "YES",
         "entryPrice": 0.285,
-        "currentPrice": 0.30000000000000004,
+        "currentPrice": 0.293,
         "shares": 106.8,
         "cost": 30.44,
-        "currentValue": 32.04,
-        "pnl": 1.6,
+        "currentValue": 31.29,
+        "pnl": 0.85,
         "edge": 0.0254,
         "openedAt": "2026-04-12T14:38:56.899Z"
       },
@@ -121,13 +121,27 @@
         "platform": "kalshi",
         "side": "NO",
         "entryPrice": 0.29,
-        "currentPrice": 0.29,
+        "currentPrice": 0.282,
         "shares": 89.16,
         "cost": 25.86,
-        "currentValue": 25.86,
-        "pnl": 0,
+        "currentValue": 25.14,
+        "pnl": -0.71,
         "edge": 0.0216,
         "openedAt": "2026-04-12T15:02:10.962Z"
+      },
+      {
+        "marketId": "kalshi-btc",
+        "question": "Bitcoin above $100k by July 2025?",
+        "platform": "kalshi",
+        "side": "NO",
+        "entryPrice": 0.322,
+        "currentPrice": 0.322,
+        "shares": 84.82,
+        "cost": 27.31,
+        "currentValue": 27.31,
+        "pnl": 0,
+        "edge": 0.0232,
+        "openedAt": "2026-04-12T15:31:47.881Z"
       }
     ]
   },
@@ -137,6 +151,6 @@
   },
   "meta": {
     "source": "github-actions-cron",
-    "version": "2.1.0"
+    "version": "3.0.0"
   }
 }
