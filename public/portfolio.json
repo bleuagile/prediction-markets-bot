@@ -1,6 +1,6 @@
 {
   "polymarket": {
-    "cash": 708.1762185165984,
+    "cash": 680.3450663262523,
     "startingCash": 1000,
     "positions": [
       {
@@ -100,6 +100,20 @@
         "pnl": 0,
         "edge": 0.0291,
         "openedAt": "2026-04-12T23:53:35.051Z"
+      },
+      {
+        "marketId": "1861361",
+        "question": "Variational FDV above $200M one day after launch?",
+        "platform": "polymarket",
+        "side": "YES",
+        "entryPrice": 0.585,
+        "currentPrice": 0.585,
+        "shares": 47.57,
+        "cost": 27.83,
+        "currentValue": 27.83,
+        "pnl": 0,
+        "edge": 0.0234,
+        "openedAt": "2026-04-13T07:26:57.351Z"
       }
     ],
     "closedTrades": [],
@@ -214,6 +228,6 @@
     "winningTrades": 0
   },
   "createdAt": "2025-04-12T00:00:00.000Z",
-  "lastUpdated": "2026-04-12T23:53:35.051Z",
-  "analysisCount": 13
+  "lastUpdated": "2026-04-13T07:26:57.351Z",
+  "analysisCount": 14
 }

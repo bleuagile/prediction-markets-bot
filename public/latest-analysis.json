@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-04-12T23:53:35.051Z",
-  "analysisCount": 13,
+  "timestamp": "2026-04-13T07:26:57.351Z",
+  "analysisCount": 14,
   "combined": {
     "totalValue": 1987.58,
     "totalPnL": -12.42,
@@ -10,10 +10,10 @@
   "platforms": {
     "polymarket": {
       "totalValue": 991.14,
-      "cash": 708.18,
+      "cash": 680.35,
       "pnl": -8.86,
       "pnlPct": -0.89,
-      "openPositions": 7,
+      "openPositions": 8,
       "totalTrades": 0,
       "winRate": 0
     },
@@ -126,6 +126,20 @@
         "pnl": 0,
         "edge": 0.0291,
         "openedAt": "2026-04-12T23:53:35.051Z"
+      },
+      {
+        "marketId": "1861361",
+        "question": "Variational FDV above $200M one day after launch?",
+        "platform": "polymarket",
+        "side": "YES",
+        "entryPrice": 0.585,
+        "currentPrice": 0.585,
+        "shares": 47.57,
+        "cost": 27.83,
+        "currentValue": 27.83,
+        "pnl": 0,
+        "edge": 0.0234,
+        "openedAt": "2026-04-13T07:26:57.351Z"
       }
     ],
     "kalshi": [
